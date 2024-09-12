@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recursive Tree</title>
+    <style>
+        canvas {
+            display: block;
+            margin: auto;
+            background-color: black;
+        }
+
+        .layout {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        button {
+            margin: 5px;
+            padding: 10px;
+            font-size: 14px;
+            width: 120px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="treeCanvas" width="800" height="600"></canvas>
+
+    <div class="layout">
+        <h1 id="txtLevel"></h1>
+    </div>
+    <div class="layout">
+        <button id="btnLevelUp">Level Up</button>
+        <button id="btnLevelDown">Level Down</button>
+        <button id="btnMin">Min Level</button>
+        <button id="btnMax">Max Level</button>
+
+    </div>
+    <div class="layout">
+        <button id="btnSwitchVersion"></button>
+    </div>
+
+    <script>
+
+        // -----------------------------------------------------------------------------------------------------------
+        // Level, Depth
+        const MAX_LEVEL = 8;
+        const MIN_LEVEL = 1;
+        const MIN_BRANCH_DEPTH = 1;
+        const MAX_BRANCH_DEPTH = 5;
+
+        const TREE_BRANCH_COLOR = 'white';
+
+        // Petal of tree
+        const PETAL_STYLE_RAIDNS = [0, 60, 120, 180, 240, 300].map(_ => _ * Math.PI / 180);
+        const PETAL_WIDTH = 3;
+        const PETAL_RADIUS = 5;
+        const PETAL_COLOR = 'pink';
+        const PETAL_START_ANGLE = 0;
+        const PETAL_END_ANGLE = Math.PI * 2;
+
+        // Star
+        const STAR_COLOR = 'yellow';
+
+        // Others
+        const canvas = document.getElementById('treeCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const startX = canvas.width / 2;
+        const startY = canvas.height - (canvas.height / 3);
+
+        const VERSION = {
+            ONE: 'one',
+            MANY: 'many',
+        };
+
+        // -----------------------------------------------------------------------------------------------------------
+        // Global Vars
+        let currentLevel = MIN_LEVEL;
+        let labelOfVersion = VERSION.ONE;
+
+        function drawTree(x1, y1, angle, depth) {
+            if (depth === 0)
+                return;
+
+            const branchLength = 100 * (depth / MAX_BRANCH_DEPTH);
+            const x2 = x1 + Math.cos(angle) * branchLength;
+            const y2 = y1 + Math.sin(angle) * branchLength;
+
+            // Level 1-5
+            drawTreeBranch(x1, y1, x2, y2);
+
+            // Level 6
+            // To draw the single petal.
+            if (currentLevel === 6 && depth === 1) {
+                drawSinglePetal(x2, y2);
+            }
+
+            // Level 7
+            // To draw the multi petal.
+            if ([7, 8].includes(currentLevel) && depth === 1) {
+                drawMultiPetal(x2, y2);
+            }
+
+            // Keep drawing the deeper branch til depth empty.
+            drawTree(x2, y2, angle - Math.PI / 3, depth - 1);  // left branch
+            drawTree(x2, y2, angle + Math.PI / 3, depth - 1);  // right branch
+        }
+
+        function drawTreeBranch(x1, y1, x2, y2) {
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.strokeStyle = TREE_BRANCH_COLOR;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+
+        // Only show on level 6
+        function drawSinglePetal(cx, cy) {
+            ctx.beginPath();
+            ctx.arc(cx, cy, PETAL_RADIUS, 0, Math.PI * 2);
+            ctx.strokeStyle = PETAL_COLOR;
+            ctx.lineWidth = PETAL_WIDTH;
+            ctx.stroke();
+        }
+
+        // Only show on level 7 or 8
+        function drawMultiPetal(cx, cy) {
+            const distance = 8;
+            PETAL_STYLE_RAIDNS.forEach((angle, i) => {
+                let x = cx + Math.cos(angle) * distance;
+                let y = cy + Math.sin(angle) * distance;
+
+                ctx.beginPath();
+                ctx.arc(x, y, PETAL_RADIUS, 0, Math.PI * 2);
+                ctx.fillStyle = PETAL_COLOR;
+                ctx.lineWidth = PETAL_WIDTH;
+                ctx.fill();
+            });
+        }
+
+        // Only show on level 8
+        function drawStar(centerX, centerY, outerRadius, innerRadius) {
+            if (currentLevel < MAX_LEVEL) {
+                return;
+            }
+            const numberOfPoints = 5;
+            const angleStep = Math.PI / numberOfPoints;
+            const rotationOffset = Math.PI / 2; // Rotate the angle offset to adjust the star to be vertical. 
+
+            ctx.beginPath();
+            for (let i = 0; i < 2 * numberOfPoints; i++) {
+
+                const angle = i * angleStep + rotationOffset;
+                const radius = i % 2 === 0 ? outerRadius : innerRadius;
+
+                const x = centerX + Math.cos(angle) * radius;
+                const y = centerY - Math.sin(angle) * radius;
+
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+
+            ctx.closePath();
+            ctx.fillStyle = STAR_COLOR;
+            ctx.fill();
+        }
+
+        function init() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);  // Clear the canvas status when init.
+
+            const depth = currentLevel > MAX_BRANCH_DEPTH ? MAX_BRANCH_DEPTH : currentLevel; // tree branch length only upgrade til 5 level.
+
+            drawTree(startX, startY, -Math.PI / 2, depth);
+            drawStar(startX, startY + 25, 30, 15); // level 8
+
+            // The label of current level.
+            document.getElementById('txtLevel').innerText = `Level: ${currentLevel}`;
+            document.getElementById('btnSwitchVersion').innerText = labelOfVersion;
+        }
+
+        // -----------------------------------------------------------------------------------------------------------
+        // Controller
+        window.onload = init;  // Wait til view loaded.
+
+        // Level Up event that increase the depth of tree.
+        document.getElementById('btnLevelUp').addEventListener('click', () => {
+            if (currentLevel >= MAX_LEVEL)
+                return;
+
+            currentLevel++;
+            init();
+        });
+
+        // Level down event that minus the depth of tree.
+        document.getElementById('btnLevelDown').addEventListener('click', () => {
+            if (currentLevel <= MIN_LEVEL)
+                return;
+
+            currentLevel--;
+            init();
+        });
+
+        // Min Level Button.
+        document.getElementById('btnMin').addEventListener('click', () => {
+            currentLevel = MIN_LEVEL;
+            init();
+        });
+
+        // Max Level Button.
+        document.getElementById('btnMax').addEventListener('click', () => {
+            currentLevel = MAX_LEVEL;
+            init();
+        });
+
+        // Switch the label of version 
+        document.getElementById('btnSwitchVersion').addEventListener('click', () => {
+            labelOfVersion = (labelOfVersion === VERSION.ONE) ? VERSION.MANY : VERSION.ONE;
+            init();
+        });
+
+    </script>
+</body>
+
+</html>
