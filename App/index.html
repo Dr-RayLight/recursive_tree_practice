@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recursive Tree</title>
+    <title>Recursive Tree Practice</title>
     <style>
         canvas {
             display: block;
@@ -27,9 +27,7 @@
 </head>
 
 <body>
-
     <canvas id="treeCanvas" width="1000" height="800"></canvas>
-
     <div class="layout">
         <h1 id="txtLevel"></h1>
     </div>
@@ -38,7 +36,7 @@
         <button id="btnLevelDown">Level Down</button>
         <button id="btnMin">Min Level</button>
         <button id="btnMax">Max Level</button>
-
+        <button id="btnSwitchVersion"></button>
     </div>
     <!-- <div class="layout">
         <button id="btnSwitchVersion"></button>
@@ -54,7 +52,7 @@
         const MAX_BRANCH_DEPTH = 5;
 
         const TREE_BRANCH_COLOR = 'white';
-        const TREE_BRANCH_LENGTHS = [120, 80, 50, 30, 15];
+        const TREE_BRANCH_LENGTHS = [150, 80, 30, 20, 15];
 
         // Petal of tree
         const PETAL_STYLE_RAIDNS = [0, 60, 120, 180, 240, 300].map(_ => _ * Math.PI / 180);
@@ -75,14 +73,38 @@
         const startY = canvas.height / 2;
 
         const VERSION = {
-            ONE: 'one',
-            MANY: 'many',
+            ONE: 'One',
+            MANY: 'Many',
         };
 
         // -----------------------------------------------------------------------------------------------------------
         // Global Vars
         let currentLevel = MIN_LEVEL;
         let labelOfVersion = VERSION.ONE;
+
+        function drawCircleTrees(cx, cy, depth) {
+            PETAL_STYLE_RAIDNS.forEach((angle, i) => {
+                const distance = 35;
+                const x1 = cx + Math.cos(angle) * distance;
+                const y1 = cy + Math.sin(angle) * distance;
+                drawTree(x1, y1, angle, depth);
+            });
+
+         //   const numberOfPoints = 5;
+         //      const angleStep = Math.PI / numberOfPoints;
+        //       const rotationOffset = Math.PI / 2; 
+
+        //       for (let i = 0; i < 2 * numberOfPoints; i++) {
+       //            if (i % 2 === 0) {
+         //              const angle = i * angleStep + rotationOffset;
+          //             const radius = 35;
+
+            //           const x1 = centerX + Math.cos(angle) * radius;
+             //          const y1 = centerY + Math.sin(angle) * radius;
+             //          drawTree(x1, y1, angle, depth);
+           //        }
+             //  }
+        }
 
         function drawTree(x1, y1, angle, depth) {
             if (depth === 0)
@@ -196,10 +218,20 @@
         function init() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);  // Clear the canvas status when init.
 
+            // Drawing Tree branchs
             const depth = currentLevel > MAX_BRANCH_DEPTH ? MAX_BRANCH_DEPTH : currentLevel; // tree branch length only upgrade til 5 level.
+            switch (labelOfVersion) {
+                default:
+                case VERSION.ONE:
+                    drawTree(startX, startY, -Math.PI / 2, depth);
+                    break;
+                case VERSION.MANY:
+                    drawCircleTrees(startX, startY, depth);
+                    break
+            }
 
-            drawTree(startX, startY, -Math.PI / 2, depth);
-            drawStar(startX, startY + 25, 30, 15, true); // level 8
+            // Drawing Star, including Parent Star & 5 Child Stars 
+            drawStar(startX, startY, 30, 15, true); // Level 8 only.
 
             // The label of current level.
             document.getElementById('txtLevel').innerText = `Level: ${currentLevel}`;
