@@ -2,10 +2,11 @@
 A recursive tree practice implementation.   
 
 #### The one verison
-![version_one](/Images/verion_one.png)
+![version_one](/Images/version_one_final.png)
 
 ---
-#### The many version (TODO)
+#### The many version
+![version_many](/Images/version_many_final.png)
 
 ---
 ## Reference
