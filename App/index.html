@@ -54,6 +54,7 @@
         const MAX_BRANCH_DEPTH = 5;
 
         const TREE_BRANCH_COLOR = 'white';
+        const TREE_BRANCH_LENGTHS = [100, 80, 56, 43, 34];
 
         // Petal of tree
         const PETAL_STYLE_RAIDNS = [0, 60, 120, 180, 240, 300].map(_ => _ * Math.PI / 180);
@@ -145,7 +146,7 @@
         }
 
         // Only show on level 8
-        function drawStar(centerX, centerY, outerRadius, innerRadius) {
+        function drawStar(centerX, centerY, outerRadius, innerRadius, isParentStar) {
             if (currentLevel < MAX_LEVEL) {
                 return;
             }
@@ -154,10 +155,18 @@
             const rotationOffset = Math.PI / 2; // Rotate the angle offset to adjust the star to be vertical. 
 
             ctx.beginPath();
+            let innerAngles = [];
             for (let i = 0; i < 2 * numberOfPoints; i++) {
 
                 const angle = i * angleStep + rotationOffset;
                 const radius = i % 2 === 0 ? outerRadius : innerRadius;
+
+                if (i % 2 === 0){
+                    innerAngles.push({
+                        angle, 
+                        innerRadius
+                    });
+                }
 
                 const x = centerX + Math.cos(angle) * radius;
                 const y = centerY - Math.sin(angle) * radius;
@@ -172,6 +181,15 @@
             ctx.closePath();
             ctx.fillStyle = STAR_COLOR;
             ctx.fill();
+
+            // Drawing child star
+            if (isParentStar) {
+                innerAngles.forEach((_, __) => {
+                    const cx = centerX + Math.cos(_.angle) * (_.innerRadius * 1.5);
+                    const cy = centerY + Math.sin(_.angle) * (_.innerRadius * 1.5);
+                    drawStar(cx, cy, 3, 2, false);
+                });
+            }
         }
 
         function init() {
@@ -180,7 +198,7 @@
             const depth = currentLevel > MAX_BRANCH_DEPTH ? MAX_BRANCH_DEPTH : currentLevel; // tree branch length only upgrade til 5 level.
 
             drawTree(startX, startY, -Math.PI / 2, depth);
-            drawStar(startX, startY + 25, 30, 15); // level 8
+            drawStar(startX, startY + 25, 30, 15, true); // level 8
 
             // The label of current level.
             document.getElementById('txtLevel').innerText = `Level: ${currentLevel}`;
