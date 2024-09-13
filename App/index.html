@@ -28,7 +28,7 @@
 
 <body>
 
-    <canvas id="treeCanvas" width="800" height="600"></canvas>
+    <canvas id="treeCanvas" width="1000" height="800"></canvas>
 
     <div class="layout">
         <h1 id="txtLevel"></h1>
@@ -54,7 +54,7 @@
         const MAX_BRANCH_DEPTH = 5;
 
         const TREE_BRANCH_COLOR = 'white';
-        const TREE_BRANCH_LENGTHS = [100, 80, 56, 43, 34];
+        const TREE_BRANCH_LENGTHS = [120, 80, 50, 30, 15];
 
         // Petal of tree
         const PETAL_STYLE_RAIDNS = [0, 60, 120, 180, 240, 300].map(_ => _ * Math.PI / 180);
@@ -72,7 +72,7 @@
         const ctx = canvas.getContext('2d');
 
         const startX = canvas.width / 2;
-        const startY = canvas.height - (canvas.height / 3);
+        const startY = canvas.height / 2;
 
         const VERSION = {
             ONE: 'one',
@@ -88,7 +88,8 @@
             if (depth === 0)
                 return;
 
-            const branchLength = 100 * (depth / MAX_BRANCH_DEPTH);
+            const branchDepth = currentLevel > MAX_BRANCH_DEPTH ? MAX_BRANCH_DEPTH : currentLevel;
+            const branchLength = TREE_BRANCH_LENGTHS.slice(0, branchDepth).reverse()[depth - 1];
             const x2 = x1 + Math.cos(angle) * branchLength;
             const y2 = y1 + Math.sin(angle) * branchLength;
 
@@ -161,9 +162,9 @@
                 const angle = i * angleStep + rotationOffset;
                 const radius = i % 2 === 0 ? outerRadius : innerRadius;
 
-                if (i % 2 === 0){
+                if (i % 2 === 0) {
                     innerAngles.push({
-                        angle, 
+                        angle,
                         innerRadius
                     });
                 }
