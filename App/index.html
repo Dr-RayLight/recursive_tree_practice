@@ -12,36 +12,68 @@
             background-color: black;
         }
 
-        .layout {
-            text-align: center;
-            margin-top: 20px;
+        h1 {
+            margin-bottom: 0;
         }
 
-        button {
-            margin: 5px;
-            padding: 10px;
-            font-size: 14px;
-            width: 120px;
+        .layout {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .textLayout {
+            display: flex;
+            gap: 120px;
+            justify-content: center;
+        }
+
+        .buttonStyle {
+            transition-duration: 0.2s;
+            background-color: #3366ff;
+            color: white;
+            border: 0;
+            font-size: 20px;
+            width: 130px;
+            height: 50px;
+            border-radius: 8px;
+        }
+
+        .buttonStyle2 {
+            transition-duration: 0.2s;
+            background-color: #ff667dca;
+            color: white;
+            border: 0;
+            font-size: 20px;
+            width: 130px;
+            height: 50px;
+            border-radius: 8px;
+        }
+
+        .buttonStyle:hover {
+            background-color: #ff9966;
+            color: white;
+        }
+
+        .buttonStyle2:hover {
+            background-color: #ffbb33;
+            color: white;
         }
     </style>
 </head>
 
 <body>
     <canvas id="treeCanvas" width="1000" height="800"></canvas>
-    <div class="layout">
+    <div class="textLayout">
         <h1 id="txtLevel"></h1>
+        <h1 id="txtVersion"></h1>
     </div>
     <div class="layout">
-        <button id="btnLevelUp">Level Up</button>
-        <button id="btnLevelDown">Level Down</button>
-        <button id="btnMin">Min Level</button>
-        <button id="btnMax">Max Level</button>
-        <button id="btnSwitchVersion"></button>
+        <button class="buttonStyle" id="btnLevelUp">Level Up</button>
+        <button class="buttonStyle" id="btnLevelDown">Level Down</button>
+        <button class="buttonStyle" id="btnMin">Min Level</button>
+        <button class="buttonStyle" id="btnMax">Max Level</button>
+        <button class="buttonStyle2" id="btnSwitchVersion"></button>
     </div>
-    <!-- <div class="layout">
-        <button id="btnSwitchVersion"></button>
-    </div> -->
-
     <script>
 
         // -----------------------------------------------------------------------------------------------------------
@@ -50,12 +82,13 @@
         const MIN_LEVEL = 1;
         const MIN_BRANCH_DEPTH = 1;
         const MAX_BRANCH_DEPTH = 5;
+        const SIXTH_ANGLE_SEGMENT = [0, 60, 120, 180, 240, 300].map(_ => _ * Math.PI / 180);
 
+        // Branch of Tree
         const TREE_BRANCH_COLOR = 'white';
-        const TREE_BRANCH_LENGTHS = [150, 80, 30, 20, 15];
+        const TREE_BRANCH_LENGTHS = [150, 80, 30, 20, 13];
 
         // Petal of tree
-        const PETAL_STYLE_RAIDNS = [0, 60, 120, 180, 240, 300].map(_ => _ * Math.PI / 180);
         const PETAL_WIDTH = 3;
         const PETAL_RADIUS = 5;
         const PETAL_COLOR = 'pink';
@@ -69,12 +102,14 @@
         const canvas = document.getElementById('treeCanvas');
         const ctx = canvas.getContext('2d');
 
+        // Start Point of X, Y
         const startX = canvas.width / 2;
         const startY = canvas.height / 2;
 
         const VERSION = {
             ONE: 'One',
             MANY: 'Many',
+            opposite: () => labelOfVersion === 'One' ? 'Many' : 'One'
         };
 
         // -----------------------------------------------------------------------------------------------------------
@@ -83,27 +118,12 @@
         let labelOfVersion = VERSION.ONE;
 
         function drawCircleTrees(cx, cy, depth) {
-            PETAL_STYLE_RAIDNS.forEach((angle, i) => {
+            SIXTH_ANGLE_SEGMENT.forEach((angle, i) => {
                 const distance = 35;
                 const x1 = cx + Math.cos(angle) * distance;
                 const y1 = cy + Math.sin(angle) * distance;
                 drawTree(x1, y1, angle, depth);
             });
-
-         //   const numberOfPoints = 5;
-         //      const angleStep = Math.PI / numberOfPoints;
-        //       const rotationOffset = Math.PI / 2; 
-
-        //       for (let i = 0; i < 2 * numberOfPoints; i++) {
-       //            if (i % 2 === 0) {
-         //              const angle = i * angleStep + rotationOffset;
-          //             const radius = 35;
-
-            //           const x1 = centerX + Math.cos(angle) * radius;
-             //          const y1 = centerY + Math.sin(angle) * radius;
-             //          drawTree(x1, y1, angle, depth);
-           //        }
-             //  }
         }
 
         function drawTree(x1, y1, angle, depth) {
@@ -156,7 +176,7 @@
         // Only show on level 7 or 8
         function drawMultiPetal(cx, cy) {
             const distance = 8;
-            PETAL_STYLE_RAIDNS.forEach((angle, i) => {
+            SIXTH_ANGLE_SEGMENT.forEach((angle, i) => {
                 let x = cx + Math.cos(angle) * distance;
                 let y = cy + Math.sin(angle) * distance;
 
@@ -235,7 +255,8 @@
 
             // The label of current level.
             document.getElementById('txtLevel').innerText = `Level: ${currentLevel}`;
-            document.getElementById('btnSwitchVersion').innerText = labelOfVersion;
+            document.getElementById('txtVersion').innerText = `Version: ${labelOfVersion}`;
+            document.getElementById('btnSwitchVersion').innerText = VERSION.opposite();
         }
 
         // -----------------------------------------------------------------------------------------------------------
@@ -274,7 +295,8 @@
 
         // Switch the label of version 
         document.getElementById('btnSwitchVersion').addEventListener('click', () => {
-            labelOfVersion = (labelOfVersion === VERSION.ONE) ? VERSION.MANY : VERSION.ONE;
+            //labelOfVersion = (labelOfVersion === VERSION.ONE) ? VERSION.MANY : VERSION.ONE;
+            labelOfVersion = VERSION.opposite();
             init();
         });
 
