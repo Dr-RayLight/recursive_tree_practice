@@ -40,9 +40,9 @@
         <button id="btnMax">Max Level</button>
 
     </div>
-    <div class="layout">
+    <!-- <div class="layout">
         <button id="btnSwitchVersion"></button>
-    </div>
+    </div> -->
 
     <script>
 
@@ -187,7 +187,7 @@
                 innerAngles.forEach((_, __) => {
                     const cx = centerX + Math.cos(_.angle) * (_.innerRadius * 1.5);
                     const cy = centerY + Math.sin(_.angle) * (_.innerRadius * 1.5);
-                    drawStar(cx, cy, 3, 2, false);
+                    drawStar(cx, cy, 5, 2, false);
                 });
             }
         }
