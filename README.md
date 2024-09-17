@@ -18,3 +18,6 @@ https://stackoverflow.com/questions/40663087/java-drawing-a-star-and-connecting-
 ![reference1](/Images/multi_petal_reference1.png)
 ---
 ![reference2](/Images/multi_petal_reference2.jpg)
+
+4. A reference of Bezier Curve: 
+https://youtu.be/YV-RZm7dWwM?si=1f18-Nlmp_2UmdE8
