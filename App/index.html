@@ -1,333 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frost Blossom</title>
+    <title>Recursive Practice</title>
     <style>
-        canvas {
-            display: block;
-            margin: auto;
-            background-color: black;
-        }
-
-        h2 {
-            margin-bottom: 5px;
-        }
-
-        .buttonStyle {
-            transition-duration: 0.2s;
-            background-color: #3366ff;
-            color: white;
-            border: 0;
-            font-size: 30px;
-            width: 50px;
-            height: 50px;
-            border-radius: 8px;
-        }
-
-        .buttonStyle2 {
-            transition-duration: 0.2s;
-            background-color: #3366ff;
-            color: white;
-            border: 0;
-            font-size: 20px;
-            width: 100px;
-            height: 50px;
-            border-radius: 8px;
-        }
-
-        .buttonStyle:hover {
-            background-color: #ff9966;
-            color: white;
-        }
-
-        .buttonStyle2:hover {
-            background-color: #ff9966;
-            color: white;
-        }
-
-        .panelLayout {
-            width: 1000px;
-            margin: 0 auto;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
             display: flex;
-            justify-content: space-between;
-        }
-
-        .childPanelLayout {
-            display: flex;
-            flex-direction: column;
-            justify-items: center;
+            justify-content: center;
             align-items: center;
+            height: 100vh;
+        }
+
+        .feed-container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .feed-item {
+            background-color: #fff;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            width: 450px;
+            height: 400px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+            text-align: center;
+        }
+
+        .feed-item:hover {
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .feed-item img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover; /* Ensures the image scales properly */
+            border-radius: 5px;
+        }
+
+        .nav-button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-top: 15px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .nav-button:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
-
 <body>
-    <canvas id="FrostBlossomCanvas" width="1000" height="800"></canvas>
-    <div class="panelLayout">
-        <!-- The lable, Button of Level. -->
-        <div class="childPanelLayout">
-            <h2 id="txtLevel"></h2>
-            <div>
-                <!-- The entity "&lt;" represent the symbol "<" in HTML -->
-                <button class="buttonStyle" id="btnLevelDown">&lt;</button>
-                <!-- The entity "&gt;" represent the symbol ">" in HTML -->
-                <button class="buttonStyle" id="btnLevelUp">&gt;</button>
-            </div>
-
+    <div class="feed-container">
+        <div class="feed-item">
+            <img src="../Images/demo1.png" alt="Bezier Curve">
+            <button class="nav-button" onclick="location.href='BezierCurve.html'">Bezier Curve</button>
         </div>
-        <!-- The lable, Button of Version. -->
-        <div class="childPanelLayout">
-            <h2 id="txtVersion">Version:</h2>
-            <button class="buttonStyle2" id="btnSwitchVersion"></button>
+
+        <div class="feed-item">
+            <img src="../Images/demo2.png" alt="Frost Blossom">
+            <button class="nav-button" onclick="location.href='FrostBlossom.html'">Frost Blossom</button>
         </div>
-        <script>
-
-            // -----------------------------------------------------------------------------------------------------------
-            // Levels Definition.
-            const MAX_LEVEL = 8;
-            const MIN_LEVEL = 1;
-
-            // Branch of Tree.
-            const TREE_MAX_BRANCH_DEPTH = 5;
-            const TREE_BEGIN_LENGTH = 200; // pixels
-            const TREES_HEXAGON_DIAMETER = 100;
-
-            // To cal & define all tree branch lengths from level 1 to level 5;
-            const TREE_BRANCH_LENGTHS = Array.from({ length: TREE_MAX_BRANCH_DEPTH }, (_, i) => i)
-                .map(level => TREE_BEGIN_LENGTH * Math.pow(0.5, level));
-
-            // To cal & define all tree branch colors from level 1 to level 5;
-            const TREE_BRANCH_COLORS = Array.from({ length: TREE_MAX_BRANCH_DEPTH }, (_, i) => i)
-                .map(level => {
-                    const R = 55 + ((level) * 40);
-                    const G = 155 + ((level) * 20);
-                    const B = 255;
-                    return `rgb(${R}, ${G}, ${B})`;
-                });
-
-            // Flower of Tree.
-            const FLOWER_WIDTH_W1 = 3;
-            const FLOWER_WIDTH_W2 = FLOWER_WIDTH_W1 - 2;
-            const FLOWER_D1 = 14;
-            const FLOWER_D2 = FLOWER_D1 * 0.5;
-            const FLOWER_COLOR = 'pink';
-
-            // Star Definition, including parent star & child star.
-            const STAR_COLOR = 'yellow';
-            const BIG_STAR_SIZE = 100;
-            const SMALL_STAR_SIZE = BIG_STAR_SIZE * 0.1;
-            const SMALL_STAR_COUNT = 5;
-
-            // Canvas Setup.
-            const canvas = document.getElementById('FrostBlossomCanvas');
-            const ctx = canvas.getContext('2d');
-
-            // Start Point of X, Y
-            const startX = canvas.width / 2;
-            const startY = canvas.height / 2;
-
-            // Version of display.
-            const VERSION = {
-                ONE: 'One',
-                MANY: 'Many',
-                opposite: () => drawingVersion === 'One' ? 'Many' : 'One'
-            };
-
-            // Circle Segment Definition.
-            const SEGMENTS_SIZE = 6;
-            const CIRCLE_DEGREE = 360;
-            const CIRCLE_EQUALLY_RADINS = Array.from({ length: SEGMENTS_SIZE }, (_, i) => i)
-                .map(e => e * (CIRCLE_DEGREE / SEGMENTS_SIZE))
-                .map(e => e * Math.PI / 180); // Convert to Radins.
-
-            /*
-                To convert from polar coordinates to Cartesian coordinates
-                Formular: 
-                x' = x1 + (cosθ * ridus)
-                y' = y1 + (sinθ * ridus)
-            */
-            const CartesianCoordinatesConverter = (x1, y1, theta, ridus) => Object.assign({
-                x2: x1 + Math.cos(theta) * ridus,
-                y2: y1 + Math.sin(theta) * ridus
-            });
-
-            // -----------------------------------------------------------------------------------------------------------
-            // Global Vars
-            let currentLevel = MIN_LEVEL;
-            let drawingVersion = VERSION.ONE;
-
-            function drawCircleTrees(cx, cy, depth) {
-                CIRCLE_EQUALLY_RADINS.forEach((angle, i) => {
-                    const radius = TREES_HEXAGON_DIAMETER >> 1;
-                    const { x2, y2 } = CartesianCoordinatesConverter(cx, cy, angle, radius);
-                    drawTree(x2, y2, angle, depth);
-                });
-            }
-
-            function drawTree(x1, y1, angle, depth) {
-                if (depth === 0)
-                    return;
-
-                const branchLevel = currentLevel > TREE_MAX_BRANCH_DEPTH ? TREE_MAX_BRANCH_DEPTH : currentLevel;
-                const branchLength = TREE_BRANCH_LENGTHS.slice(0, branchLevel).reverse()[depth - 1];
-                const { x2, y2 } = CartesianCoordinatesConverter(x1, y1, angle, branchLength);
-
-                // Level 1-5
-                drawTreeBranch(x1, y1, x2, y2, branchLevel, depth);
-
-                // Level 6
-                // To draw the single Flower.
-                if (currentLevel === 6 && depth === 1) {
-                    drawSinglePetalFlower(x2, y2);
-                }
-
-                // Level 7
-                // To draw the multi Flower.
-                if ([7, 8].includes(currentLevel) && depth === 1) {
-                    drawMultiPetalFlower(x2, y2);
-                }
-
-                // Keep drawing the deeper branch til depth empty.
-                drawTree(x2, y2, angle - Math.PI / 3, depth - 1);  // left branch
-                drawTree(x2, y2, angle + Math.PI / 3, depth - 1);  // right branch
-            }
-
-            function drawTreeBranch(x1, y1, x2, y2, branchLevel, depth) {
-                ctx.beginPath();
-                ctx.moveTo(x1, y1);
-                ctx.lineTo(x2, y2);
-                ctx.strokeStyle = TREE_BRANCH_COLORS.slice(0, branchLevel).reverse()[depth - 1];
-                ctx.lineWidth = 1;
-                ctx.stroke();
-            }
-
-            // Only show on level 6
-            function drawSinglePetalFlower(cx, cy) {
-                ctx.beginPath();
-                ctx.arc(cx, cy, (FLOWER_D1 / 2), 0, Math.PI * 2);
-                ctx.strokeStyle = FLOWER_COLOR;
-                ctx.lineWidth = FLOWER_WIDTH_W1;
-                ctx.stroke();
-            }
-
-            // Only show on level 7 or 8
-            function drawMultiPetalFlower(cx, cy) {
-                CIRCLE_EQUALLY_RADINS.forEach((angle, i) => {
-                    const { x2, y2 } = CartesianCoordinatesConverter(cx, cy, angle, FLOWER_D2);
-                    ctx.beginPath();
-                    ctx.arc(x2, y2, (FLOWER_D2 / 2), 0, Math.PI * 2);
-                    ctx.fillStyle = FLOWER_COLOR;
-                    ctx.lineWidth = FLOWER_WIDTH_W2;
-                    ctx.fill();
-                });
-            }
-
-            // Only show on level 8
-            function drawStar(centerX, centerY, isBigStar) {
-                if (currentLevel < MAX_LEVEL) {
-                    return;
-                }
-
-                const outerRadius = (isBigStar ? BIG_STAR_SIZE : SMALL_STAR_SIZE) >> 1;
-                const innerRadius = outerRadius >> 1;
-
-                const numberOfPoints = SMALL_STAR_COUNT;
-                const angleStep = Math.PI / numberOfPoints;
-                const rotationOffset = Math.PI / 2; // Rotate the angle offset to adjust the star to be vertical. 
-
-                ctx.beginPath();
-                let smallStarPositions = [];
-                for (let i = 0; i < 2 * numberOfPoints; i++) {
-
-                    const angle = i * angleStep + rotationOffset;
-                    const radius = i % 2 === 0 ? outerRadius : innerRadius;
-
-                    const x = centerX + Math.cos(angle) * radius;
-                    const y = centerY - Math.sin(angle) * radius;
-
-                    if (i === 0) {
-                        ctx.moveTo(x, y);
-                    } else {
-                        ctx.lineTo(x, y);
-                    }
-
-                    // Stored Small Start XY.
-                    if (isBigStar && i % 2 === 0) {
-                        smallStarPositions.push({
-                            angle,
-                            innerRadius
-                        });
-                    }
-                }
-
-                ctx.closePath();
-                ctx.fillStyle = STAR_COLOR;
-                ctx.fill();
-
-                // Drawing Small Star
-                if (isBigStar) {
-                    smallStarPositions.forEach(c => {
-                        const { x2, y2 } = CartesianCoordinatesConverter(centerX, centerY, c.angle, (c.innerRadius * 1.5));
-                        drawStar(x2, y2, false);
-                    });
-                }
-            }
-
-            function init() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);  // Clear the canvas status when init.
-
-                // Drawing Tree branchs
-                const depth = currentLevel > TREE_MAX_BRANCH_DEPTH ? TREE_MAX_BRANCH_DEPTH : currentLevel; // tree branch length only upgrade til 5 level.
-                switch (drawingVersion) {
-                    default:
-                    case VERSION.ONE:
-                        drawTree(startX, startY, -Math.PI / 2, depth);
-                        break;
-                    case VERSION.MANY:
-                        drawCircleTrees(startX, startY, depth);
-                        break
-                }
-
-                // Drawing Star, including Big Star & 5 Small Stars 
-                drawStar(startX, startY, true); // Level 8 only.
-
-                // The labels, such as Level, Version
-                document.getElementById('txtLevel').innerText = `Level: ${currentLevel}`;
-                document.getElementById('btnSwitchVersion').innerText = drawingVersion;
-            }
-
-            // -----------------------------------------------------------------------------------------------------------
-            // Controller
-            window.onload = init;  // Wait til view loaded.
-
-            // Level Up event that increase the depth of tree.
-            document.getElementById('btnLevelUp').addEventListener('click', () => {
-                if (currentLevel >= MAX_LEVEL)
-                    return;
-
-                currentLevel++;
-                init();
-            });
-
-            // Level down event that minus the depth of tree.
-            document.getElementById('btnLevelDown').addEventListener('click', () => {
-                if (currentLevel <= MIN_LEVEL)
-                    return;
-
-                currentLevel--;
-                init();
-            });
-
-            // Switch the label of version 
-            document.getElementById('btnSwitchVersion').addEventListener('click', () => {
-                drawingVersion = VERSION.opposite();
-                init();
-            });
-
-        </script>
+    </div>
 </body>
-
 </html>
+
+
+<!-- <button class="nav-button" onclick="location.href='BezierCurve.html'">Bezier Curve Demo</button>
+<button class="nav-button" onclick="location.href='FrostBlossom.html'">Frost Blossom Demo</button> -->
