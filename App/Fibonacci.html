@@ -1,0 +1,58 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fibonacci Series Practice</title>
+</head>
+
+<body>
+    <script>
+        /*
+        Fibonacci Series Definition
+        費氏數列： [0, 1, 1, 2, 3, 5, 8, 13, ....] n = 前兩數的和
+        公式: 
+        F(0) = 0;
+        F(1) = 1;
+        F(2) = 1;
+        F(n) = F(n-1) + F(n-2); ** n > 2
+        */
+
+        //方法 1: 使用遞迴的方法，求費氏數列會在指數時間 O(n^2)
+        function fib_Recursive(n) {
+            if (n === 0) {
+                return 0;
+            }
+
+            if (n === 1 || n === 2) {
+                return 1;
+            }
+
+            let value = fib_Recursive(n - 1) + fib_Recursive(n - 2);
+            return value;
+        }
+
+        // 方法 2: 使用迭代法，求費氏數列時間複雜度會在線性時間 O(n) 
+        function fib_Iterative(n) {
+            if (n === 0) return 0;
+            if ([1, 2].includes(n)) return 1;
+
+            let curr = 1;
+            let next = 1;
+            for (let i = 3; i <= n; i ++) { // TODO
+            }
+            return rlt;
+        }
+
+        // 方法 3: 使用黃金比例公式，求費氏數列的時間複雜度會在常數時間 O(1)，但當 n 很大時會開始出現誤差
+        function main() {
+            const n = 10;
+            console.log("fib_Recursive : " + fib_Recursive(n));
+            console.log("fib_Iterative : " + fib_Iterative(n));
+
+        }
+
+        window.onload = main
+    </script>
+</body>
+
+</html>
