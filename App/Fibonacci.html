@@ -3,9 +3,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fibonacci Series Practice</title>
+    <style>
+        .buttonStyle {
+            transition-duration: 0.2s;
+            background-color: #3366ff;
+            color: white;
+            border: 0;
+            font-size: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+        }
+
+        .buttonStyle2 {
+            transition-duration: 0.2s;
+            background-color: #3366ff;
+            color: white;
+            border: 0;
+            font-size: 20px;
+            width: 100px;
+            height: 50px;
+            border-radius: 8px;
+        }
+
+        .buttonStyle:hover {
+            background-color: #ff9966;
+            color: white;
+        }
+
+        .buttonStyle2:hover {
+            background-color: #ff9966;
+            color: white;
+        }
+    </style>
 </head>
 
 <body>
+    <h1 id="value_n"></h1>
+    <h2 id="recursive_way"></h2>
+    <h2 id="iterator_way"></h2>
+    <h2 id="golden_ratio_formular_way"></h2>
+
+    <div>
+        <!-- The entity "&lt;" represent the symbol "<" in HTML -->
+        <button class="buttonStyle" id="btnMinus">&lt;</button>
+        <!-- The entity "&gt;" represent the symbol ">" in HTML -->
+        <button class="buttonStyle" id="btnAdd">&gt;</button>
+    </div>
     <script>
         /*
         Fibonacci Series Definition
@@ -37,21 +81,71 @@
             if ([1, 2].includes(n)) return 1;
 
             let curr = 1;
-            let next = 1;
-            for (let i = 3; i <= n; i ++) { // TODO
+            let prev = 1;
+            for (let i = 2; i < n; i ++) { // TODO // [0, 1, 1, 2, 3, 5, 8...]
+                let next = curr + prev;
+                prev = curr;
+                curr = next;
             }
-            return rlt;
+            return curr;
         }
 
         // 方法 3: 使用黃金比例公式，求費氏數列的時間複雜度會在常數時間 O(1)，但當 n 很大時會開始出現誤差
-        function main() {
-            const n = 10;
-            console.log("fib_Recursive : " + fib_Recursive(n));
-            console.log("fib_Iterative : " + fib_Iterative(n));
+        /*
+        */
+        function fib_Goldern_Ratio_Formula(n) {
+            // const phi = (1 + Math.sqrt(5)) / 2;  // 黃金比例 φ
+            // const psi = (1 - Math.sqrt(5)) / 2;  // 1 - φ
 
+            const phi = 1.618;  // 使用近似的黃金比例
+            const psi = -0.618;  // 1 - φ 近似值
+            return Math.round((Math.pow(phi, n) - Math.pow(psi, n)) / Math.sqrt(5));  // 四捨五入求近似整數
+        }
+        
+        let n = 1;
+        function init() {
+
+            // Recursive
+            const time1CostStart = Date.now();
+            const fib1 = fib_Recursive(n);
+            const time1CostEnd = Date.now() - time1CostStart;
+            console.log("fib_Recursive : " + fib1);
+
+            // Iterator
+            const time2CostStart = Date.now();
+            const fib2 = fib_Iterative(n);
+            const time2CostEnd = Date.now() - time2CostStart;
+            console.log("fib_Iterative : " + fib2);
+
+
+            // Golden Ratio Formula
+            const time3CostStart = Date.now();
+            const fib3 = fib_Goldern_Ratio_Formula(n);
+            const time3CostEnd = Date.now() - time3CostStart;
+            console.log("fib_Goldern_Ratio_Formula : " + fib3);
+
+            document.getElementById('value_n').innerHTML = `N = ${n}`;
+            document.getElementById('recursive_way').innerHTML = ` Recursive: ${fib1} , Time Cost: ${time1CostEnd} ms.`;
+            document.getElementById('iterator_way').innerHTML = `Iterator: ${fib2} , Time Cost: ${time2CostEnd} ms.`;
+            document.getElementById('golden_ratio_formular_way').innerHTML = `Golden Ratio Formular: ${fib3} , Time Cost: ${time3CostEnd} ms.`;
         }
 
-        window.onload = main
+        window.onload = init
+
+        // -------------------------------------------------------------------------------------------
+        document.getElementById('btnAdd').addEventListener('click', () =>{
+            n++;
+            init();
+        });
+
+        document.getElementById('btnMinus').addEventListener('click', () => {
+            if (n <= 1) {
+                return;
+            }
+            n--;
+            init();
+        });
+        
     </script>
 </body>
 
