@@ -1,0 +1,63 @@
+<html>
+
+<head>
+    <title>The Sorting Algorithm Practice</title>
+    <meta charset="UTF-8">
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <script>
+
+        function insertionSort(arr) {
+            // 從陣列的第二個元素開始，因為第一個元素預設為已排序部分
+            for (let i = 1; i < arr.length; i++) {
+                let key = arr[i];  // 目前需要插入的元素
+                let j = i - 1;
+
+                // 將已排序部分的元素逐一向右移動，直到找到合適的位置
+                while (j >= 0 && arr[j] > key) {
+
+                    arr[j + 1] = arr[j];
+                    j = j - 1;
+
+                }
+
+                // 將元素插入正確的位置
+                arr[j + 1] = key;
+
+                console.log(`Sort Times ${i}: ${arr.toString()}`)
+            }
+            return arr;
+        }
+
+        function myInsertionSort(arr) {
+            for (let i = 1; i < arr.length; i++) {
+                let key = arr[i];
+                let j = i - 1;
+
+                // 這裡是要找出在已排序的陣列中，應該插入哪個位置
+                while(j >= 0 && arr[j] > key) {
+                    arr[j + 1] = arr[j];
+                    j--;
+                }
+                arr[j + 1] = key;
+              console.log(`My Sort Times ${i}: ${arr.toString()}`)
+            }
+            return arr;
+        }
+
+        // Test Case
+        // let array = [9, 3, 1, 4, 11, 18, 5, 12, 6];
+        let array = [9, 3, 1, 4, 11];
+        insertionSort(array);
+        array =  [9, 3, 1, 4, 11];
+        myInsertionSort(array);
+
+
+    </script>
+</body>
+
+</html>
