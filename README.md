@@ -21,3 +21,6 @@ https://stackoverflow.com/questions/40663087/java-drawing-a-star-and-connecting-
 
 4. A reference of Bezier Curve: 
 https://youtu.be/YV-RZm7dWwM?si=1f18-Nlmp_2UmdE8
+
+5. A reference of Insertion Sort:
+https://medium.com/@ollieeryo/insertion-sort-%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F%E6%B3%95-c215ae516a7a
