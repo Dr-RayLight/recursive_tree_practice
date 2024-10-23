@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>Wiggle Stereoscopy 演示</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #222;
+            margin: 0;
+        }
+        #stereo-container {
+            position: relative;
+            width: 600px; /* 根據圖片大小調整 */
+            height: 400px; /* 根據圖片大小調整 */
+            overflow: hidden;
+        }
+        .stereo-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.1s ease;
+        }
+        #left-image {
+            /* 初始偏移 */
+            transform: translateX(-5px);
+        }
+        #right-image {
+            display: none;
+            transform: translateX(5px);
+        }
+    </style>
+</head>
+<body>
+
+<div id="stereo-container">
+    <img id="left-image" class="stereo-image" src="../Images/img_ws1.jpg" alt="Left View">
+    <img id="right-image" class="stereo-image" src="../Images/img_ws2.jpg" alt="Right View">
+</div>
+
+<script>
+    // 獲取圖片元素
+    const leftImage = document.getElementById('left-image');
+    const rightImage = document.getElementById('right-image');
+
+    // 設定切換間隔（毫秒）
+    const interval = 10; // 每0.1秒切換一次
+
+    // 設定每次切換的偏移量
+    const offset = 0; // 像素
+
+    // 記錄當前狀態
+    let isLeftVisible = true;
+    let direction = 1; // 1表示向右移動，-1表示向左移動
+
+    setInterval(() => {
+        if (isLeftVisible) {
+            // 隱藏左圖，顯示右圖
+            leftImage.style.display = 'none';
+            rightImage.style.display = 'block';
+            // 移動右圖
+            rightImage.style.transform = `translateX(${offset * direction}px)`;
+        } else {
+            // 隱藏右圖，顯示左圖
+            rightImage.style.display = 'none';
+            leftImage.style.display = 'block';
+            // 移動左圖
+            leftImage.style.transform = `translateX(${offset * direction * -1}px)`;
+        }
+
+        // 切換狀態
+        isLeftVisible = !isLeftVisible;
+
+        // 反轉移動方向
+        direction *= -1;
+    }, interval);
+</script>
+
+</body>
+</html>
