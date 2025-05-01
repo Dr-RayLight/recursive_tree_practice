@@ -61,7 +61,7 @@
         F(n) = F(n-1) + F(n-2); ** n > 2
         */
 
-        //方法 1: 使用遞迴的方法，求費氏數列會在指數時間 O(n^2)
+        // 方法 1: 使用遞迴的方法，求費氏數列會在指數時間 O(n^2)
         function fib_Recursive(n) {
             if (n === 0) {
                 return 0;
@@ -82,7 +82,7 @@
 
             let curr = 1;
             let prev = 1;
-            for (let i = 2; i < n; i ++) { // TODO // [0, 1, 1, 2, 3, 5, 8...]
+            for (let i = 2; i < n; i ++) { // [0, 1, 1, 2, 3, 5, 8...]
                 let next = curr + prev;
                 prev = curr;
                 curr = next;
@@ -91,8 +91,6 @@
         }
 
         // 方法 3: 使用黃金比例公式，求費氏數列的時間複雜度會在常數時間 O(1)，但當 n 很大時會開始出現誤差
-        /*
-        */
         function fib_Goldern_Ratio_Formula(n) {
             // const phi = (1 + Math.sqrt(5)) / 2;  // 黃金比例 φ
             // const psi = (1 - Math.sqrt(5)) / 2;  // 1 - φ
@@ -106,22 +104,22 @@
         function init() {
 
             // Recursive
-            const time1CostStart = Date.now();
+            const time1CostStart = performance.now();
             const fib1 = fib_Recursive(n);
-            const time1CostEnd = Date.now() - time1CostStart;
+            const time1CostEnd = performance.now() - time1CostStart;
             console.log("fib_Recursive : " + fib1);
 
             // Iterator
-            const time2CostStart = Date.now();
+            const time2CostStart = performance.now();
             const fib2 = fib_Iterative(n);
-            const time2CostEnd = Date.now() - time2CostStart;
+            const time2CostEnd = performance.now() - time2CostStart;
             console.log("fib_Iterative : " + fib2);
 
 
             // Golden Ratio Formula
-            const time3CostStart = Date.now();
+            const time3CostStart = performance.now();
             const fib3 = fib_Goldern_Ratio_Formula(n);
-            const time3CostEnd = Date.now() - time3CostStart;
+            const time3CostEnd = performance.now() - time3CostStart;
             console.log("fib_Goldern_Ratio_Formula : " + fib3);
 
             document.getElementById('value_n').innerHTML = `N = ${n}`;

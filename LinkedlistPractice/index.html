@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linked List Implementations in JavaScript</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h2 { color: #333; }
+        pre { background: #f4f4f4; padding: 10px; border-radius: 4px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Linked List Implementations in JavaScript</h1>
+
+    <h2>1. Singly LinkedList</h2>
+    <pre id="singly-output"></pre>
+
+    <h2>2. Doubly LinkedList</h2>
+    <pre id="doubly-output"></pre>
+
+    <h2>3. Circular LinkedList</h2>
+    <pre id="circular-output"></pre>
+
+    <script>
+        // 1. Singly LinkedList
+        class SinglyNode {
+            constructor(data) {
+                this.data = data;
+                this.next = null;
+            }
+        }
+
+        class SinglyLinkedList {
+            constructor() {
+                this.head = null;
+            }
+
+            append(data) {
+                const newNode = new SinglyNode(data);
+                if (!this.head) {
+                    this.head = newNode;
+                    return;
+                }
+                let current = this.head;
+                while (current.next) {
+                    current = current.next;
+                }
+                current.next = newNode;
+            }
+
+            printList() {
+                const elements = [];
+                let current = this.head;
+                while (current) {
+                    elements.push(current.data);
+                    current = current.next;
+                }
+                return elements.join(' -> ');
+            }
+        }
+
+        const singlyList = new SinglyLinkedList();
+        [1, 2, 3, 4].forEach(n => singlyList.append(n));
+        document.getElementById('singly-output').textContent = singlyList.printList();
+
+        // 2. Doubly LinkedList
+        class DoublyNode {
+            constructor(data) {
+                this.data = data;
+                this.next = null;
+                this.prev = null;
+            }
+        }
+
+        class DoublyLinkedList {
+            constructor() {
+                this.head = null;
+                this.tail = null;
+            }
+
+            append(data) {
+                const newNode = new DoublyNode(data);
+                if (!this.head) {
+                    this.head = newNode;
+                    this.tail = newNode;
+                    return;
+                }
+                this.tail.next = newNode;
+                newNode.prev = this.tail;
+                this.tail = newNode;
+            }
+
+            printForward() {
+                const elements = [];
+                let current = this.head;
+                while (current) {
+                    elements.push(current.data);
+                    current = current.next;
+                }
+                return elements.join(' <-> ');
+            }
+
+            printBackward() {
+                const elements = [];
+                let current = this.tail;
+                while (current) {
+                    elements.push(current.data);
+                    current = current.prev;
+                }
+                return elements.join(' <-> ');
+            }
+        }
+
+        const doublyList = new DoublyLinkedList();
+        ['A', 'B', 'C', 'D'].forEach(n => doublyList.append(n));
+        document.getElementById('doubly-output').textContent =
+            'Forward: ' + doublyList.printForward() + '\n' +
+            'Backward: ' + doublyList.printBackward();
+
+        // 3. Circular LinkedList
+        class CircularNode {
+            constructor(data) {
+                this.data = data;
+                this.next = null;
+            }
+        }
+
+        class CircularLinkedList {
+            constructor() {
+                this.head = null;
+            }
+
+            append(data) {
+                const newNode = new CircularNode(data);
+                if (!this.head) {
+                    this.head = newNode;
+                    newNode.next = this.head;
+                    return;
+                }
+                let current = this.head;
+                while (current.next !== this.head) {
+                    current = current.next;
+                }
+                current.next = newNode;
+                newNode.next = this.head;
+            }
+
+            printList() {
+                const elements = [];
+                if (!this.head) return '';
+                let current = this.head;
+                do {
+                    elements.push(current.data);
+                    current = current.next;
+                } while (current !== this.head);
+                return elements.join(' -> ') + ' -> (head)';
+            }
+        }
+
+        const circularList = new CircularLinkedList();
+        [10, 20, 30, 40].forEach(n => circularList.append(n));
+        document.getElementById('circular-output').textContent = circularList.printList();
+    </script>
+</body>
+</html>
